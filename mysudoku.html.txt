@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>純淨數獨 - 無廣告版</title>
+    <style>
+        :root { --primary: #34495e; --highlight: #e8f1ff; --selected: #bbdefb; --error: #ffcdd2; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f8f9fa; margin: 0; padding: 20px; }
+        h1 { color: var(--primary); margin-bottom: 10px; }
+        #grid { display: grid; grid-template-columns: repeat(9, 1fr); border: 2px solid #333; background: #333; gap: 1px; width: 100%; max-width: 450px; aspect-ratio: 1; }
+        .cell { background: white; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; user-select: none; }
+        .cell:nth-child(3n) { border-right: 2px solid #333; }
+        .cell:nth-child(9n) { border-right: none; }
+        tr:nth-child(3n) td { border-bottom: 2px solid #333; } /* 此處邏輯用於Grid */
+        .cell.thick-right { border-right: 2px solid #333; }
+        .cell.thick-bottom { border-bottom: 2px solid #333; }
+        .selected { background: var(--selected) !important; }
+        .fixed { font-weight: bold; color: #000; }
+        .wrong { background: var(--error) !important; color: #d32f2f; }
+        
+        #controls { margin-top: 20px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; max-width: 450px; }
+        button { padding: 15px; font-size: 1.2rem; border: none; border-radius: 5px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; }
+        button:active { background: #eee; }
+        .menu { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>純淨數獨</h1>
+
+<div class="menu">
+    <button onclick="generateGame('easy')">簡單</button>
+    <button onclick="generateGame('hard')">困難</button>
+</div>
+
+<div id="grid"></div>
+
+<div id="controls">
+    <button onclick="inputNum(1)">1</button>
+    <button onclick="inputNum(2)">2</button>
+    <button onclick="inputNum(3)">3</button>
+    <button onclick="inputNum(4)">4</button>
+    <button onclick="inputNum(5)">5</button>
+    <button onclick="inputNum(6)">6</button>
+    <button onclick="inputNum(7)">7</button>
+    <button onclick="inputNum(8)">8</button>
+    <button onclick="inputNum(9)">9</button>
+    <button onclick="inputNum(0)">清除</button>
+</div>
+
+<script>
+    let selectedCell = null;
+    let solution = [];
+    
+    // 初始化棋盤
+    function initGrid() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        for (let i = 0; i < 81; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            if ((i + 1) % 3 === 0 && (i + 1) % 9 !== 0) cell.classList.add('thick-right');
+            if (Math.floor(i / 9) === 2 || Math.floor(i / 9) === 5) cell.classList.add('thick-bottom');
+            cell.onclick = () => selectCell(cell);
+            grid.appendChild(cell);
+        }
+    }
+
+    function selectCell(cell) {
+        if (selectedCell) selectedCell.classList.remove('selected');
+        selectedCell = cell;
+        selectedCell.classList.add('selected');
+    }
+
+    function inputNum(n) {
+        if (!selectedCell || selectedCell.classList.contains('fixed')) return;
+        selectedCell.textContent = n === 0 ? '' : n;
+        checkError();
+    }
+
+    // 這裡為了演示簡化了邏輯，正式版會加入完整的生成算法
+    function generateGame(level) {
+        initGrid();
+        // 範例：靜態題目 (後續可擴充為動態生成)
+        const puzzle = "530070000600195000098000060800060003400803001700020006060000280000419005000080079";
+        const cells = document.querySelectorAll('.cell');
+        puzzle.split('').forEach((char, i) => {
+            if (char !== '0') {
+                cells[i].textContent = char;
+                cells[i].classList.add('fixed');
+            }
+        });
+    }
+
+    function checkError() {
+        // 這裡可以加入檢查與解答對比的邏輯
+    }
+
+    generateGame('easy');
+</script>
+</body>
+</html>
